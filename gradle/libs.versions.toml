@@ -7,6 +7,14 @@ kotlin = "2.1.20"
 kotlinxDatetime = "0.6.1"
 kotlinxSerializationJSON = "1.7.3"
 kotlinxCoroutines = "1.9.0"
+springBoot = "3.3.5"
+springDependencyManagement = "1.1.6"
+springdocOpenapi = "2.6.0"
+liquibase = "4.29.2"
+postgres = "42.7.4"
+jacksonKotlin = "2.17.2"
+rdf4j = "4.3.11"
+detekt = "1.23.6"
 
 [libraries]
 kotlinGradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
@@ -14,9 +22,37 @@ kotlinxDatetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.r
 kotlinxSerialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJSON" }
 kotlinxCoroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
 
+# Spring Boot starters
+springBootStarterWeb = { module = "org.springframework.boot:spring-boot-starter-web", version.ref = "springBoot" }
+springBootStarterActuator = { module = "org.springframework.boot:spring-boot-starter-actuator", version.ref = "springBoot" }
+springBootStarterAmqp = { module = "org.springframework.boot:spring-boot-starter-amqp", version.ref = "springBoot" }
+springBootStarterValidation = { module = "org.springframework.boot:spring-boot-starter-validation", version.ref = "springBoot" }
+springBootStarterDataJpa = { module = "org.springframework.boot:spring-boot-starter-data-jpa", version.ref = "springBoot" }
+springBootStarterTest = { module = "org.springframework.boot:spring-boot-starter-test", version.ref = "springBoot" }
+
+# Infra libs
+postgresql = { module = "org.postgresql:postgresql", version.ref = "postgres" }
+liquibaseCore = { module = "org.liquibase:liquibase-core", version.ref = "liquibase" }
+jacksonModuleKotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jacksonKotlin" }
+springBootStarterSecurity = { module = "org.springframework.boot:spring-boot-starter-security", version.ref = "springBoot" }
+springBootStarterOAuth2ResourceServer = { module = "org.springframework.boot:spring-boot-starter-oauth2-resource-server", version.ref = "springBoot" }
+
+# RDF4J
+rdf4jRepositoryApi = { module = "org.eclipse.rdf4j:rdf4j-repository-api", version.ref = "rdf4j" }
+rdf4jRepositorySail = { module = "org.eclipse.rdf4j:rdf4j-repository-sail", version.ref = "rdf4j" }
+rdf4jSailMemory = { module = "org.eclipse.rdf4j:rdf4j-sail-memory", version.ref = "rdf4j" }
+rdf4jRioApi = { module = "org.eclipse.rdf4j:rdf4j-rio-api", version.ref = "rdf4j" }
+
+# OpenAPI
+springdocOpenapiUi = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "springdocOpenapi" }
+
 # Libraries can be bundled together for easier import
 [bundles]
 kotlinxEcosystem = ["kotlinxDatetime", "kotlinxSerialization", "kotlinxCoroutines"]
 
 [plugins]
-kotlinPluginSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+ kotlinPluginSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+ springBoot = { id = "org.springframework.boot", version.ref = "springBoot" }
+ springDependencyManagement = { id = "io.spring.dependency-management", version.ref = "springDependencyManagement" }
+ kotlinPluginSpring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotlin" }
+ detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }

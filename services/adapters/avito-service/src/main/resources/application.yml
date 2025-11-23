@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: avito-adapter
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USER:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
+
+avito:
+  api:
+    base-url: ${AVITO_API_BASE_URL:https://api.avito.ru}
+    token: ${AVITO_API_TOKEN:}
+
+server:
+  port: ${SERVER_PORT:8094}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,env,metrics,prometheus
+  endpoint:
+    health:
+      show-details: when_authorized
+

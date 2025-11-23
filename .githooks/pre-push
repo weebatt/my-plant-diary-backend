@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "Running Detekt before push..."
+
+if ! ./gradlew detekt --no-daemon --console=plain; then
+  echo "Detekt обнаружил проблемы. Исправьте их перед push." >&2
+  exit 1
+fi
+
+echo "Detekt OK. Продолжаем push."
+exit 0
+

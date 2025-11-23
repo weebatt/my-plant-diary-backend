@@ -16,10 +16,28 @@ plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
 }
 
-// Include the `app` and `utils` subprojects in the build.
-// If there are changes in only one of the projects, Gradle will rebuild only the one that has changed.
+// Include subprojects in the build.
 // Learn more about structuring projects with Gradle - https://docs.gradle.org/8.7/userguide/multi_project_builds.html
-include(":app")
-include(":utils")
+// `app` module removed; API module provides the runnable entrypoint
+
+// Contracts (shared DTO/events)
+include(":contracts")
+
+// Services (independent deployables)
+include(":services:gateway")
+include(":services:user-service")
+include(":services:diary-service")
+include(":services:dictionary-service")
+include(":services:notification-orchestrator")
+include(":services:scheduler")
+include(":services:outbox-publisher")
+include(":services:adapters:telegram-service")
+include(":services:adapters:avito-service")
+include(":services:adapters:webpush-service")
+
+// Infrastructure (shared clients)
+include(":infra:broker")
+include(":infra:stores:postgres")
+include(":infra:stores:graphdb")
 
 rootProject.name = "my-plant-diary-backend"

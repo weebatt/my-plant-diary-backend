@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+MSG_FILE="$1"
+FIRST_LINE="$(head -n1 "$MSG_FILE" | tr -d '\r')"
+
+# Allowed types per project convention
+ALLOWED_TYPES='feat|refactor|fix|chore|test|docs|ci'
+
+if [[ ! "$FIRST_LINE" =~ ^($ALLOWED_TYPES)(\([^)]+\))?:\  ]]; then
+  echo "\nКоммит отклонён: сообщение не соответствует конвенции." >&2
+  echo "Ожидаемый формат: type(scope)?: short_description" >&2
+  echo "Где type один из: feat, refactor, fix, chore, test, docs" >&2
+  echo "Примеры:" >&2
+  echo "  feat(gateway): add plants list endpoint" >&2
+  echo "  fix(user-service): correct nullable field mapping" >&2
+  echo "  docs: update README getting started" >&2
+  exit 1
+fi
+
+exit 0

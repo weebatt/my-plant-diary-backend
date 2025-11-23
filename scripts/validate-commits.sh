@@ -18,7 +18,7 @@ while IFS= read -r SUBJECT; do
   if [[ -z "$SUBJECT" ]]; then
     continue
   fi
-  if [[ ! "$SUBJECT" =~ ^($ALLOWED_TYPES_REGEX)(\([^)]+\)?:\ .+ ]]; then
+  if [[ ! "$SUBJECT" =~ ^($ALLOWED_TYPES_REGEX)(\([a-zA-Z0-9_-]+\))?:\ .+ ]]; then
     echo "Invalid commit subject: '$SUBJECT'"
     FAIL=1
   fi

@@ -1,7 +1,7 @@
-package com.myplantdiary.contracts.events
+package events
 
-import kotlinx.serialization.Serializable
 import kotlinx.datetime.Instant
+import kotlinx.serialization.Serializable
 
 @Serializable
 data class EventEnvelope<T>(
@@ -11,4 +11,3 @@ data class EventEnvelope<T>(
     val occurredAt: Instant,
     val payload: T
 )
-

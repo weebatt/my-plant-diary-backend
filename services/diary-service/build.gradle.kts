@@ -14,8 +14,6 @@ dependencies {
     implementation(libs.springBootStarterDataJpa)
     implementation(libs.liquibaseCore)
     implementation(libs.jacksonModuleKotlin)
-    implementation(libs.springBootStarterSecurity)
-    implementation(libs.springBootStarterOAuth2ResourceServer)
     runtimeOnly(libs.postgresql)
     testImplementation(libs.springBootStarterTest)
 }

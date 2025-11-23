@@ -1,4 +1,4 @@
-package com.myplantdiary.contracts.events
+package events
 
 import kotlinx.serialization.Serializable
 

@@ -14,8 +14,6 @@ dependencies {
     implementation(libs.springBootStarterDataJpa)
     implementation(libs.liquibaseCore)
     implementation(libs.jacksonModuleKotlin)
-    implementation(libs.springBootStarterSecurity)
-    implementation(libs.springBootStarterOAuth2ResourceServer)
     runtimeOnly(libs.postgresql)
     testImplementation(libs.springBootStarterTest)
     // RDF4J stack (in-memory by default, replace with remote when needed)

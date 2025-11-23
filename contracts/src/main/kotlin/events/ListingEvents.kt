@@ -1,4 +1,4 @@
-package com.myplantdiary.contracts.events
+package events
 
 import kotlinx.serialization.Serializable
 
@@ -23,4 +23,3 @@ data class ListingPublishFailed(
     val listingId: String,
     val reason: String
 )
-

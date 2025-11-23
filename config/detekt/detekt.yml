@@ -8,32 +8,31 @@ config:
 processors:
   active: true
 
-rules:
-  NamingRules:
+naming:
+  active: true
+  ClassNaming:
     active: true
-    ClassNaming:
-      active: true
-      classPattern: '[A-Z][a-zA-Z0-9]*'
-    FunctionNaming:
-      active: true
-      functionPattern: '[a-z][a-zA-Z0-9]*'
-      ignoreOverridden: true
-    VariableNaming:
-      active: true
-      variablePattern: '[a-z][A-Za-z0-9]*'
-      privateVariablePattern: '(_)?[a-z][A-Za-z0-9]*'
-    PackageNaming:
-      active: true
-      packagePattern: '^[a-z]+(\.[a-z][a-z0-9_]*)*$'
-    MatchingDeclarationName:
-      active: true
-  formatting:
+    classPattern: '[A-Z][a-zA-Z0-9]*'
+  FunctionNaming:
     active: true
-    FinalNewline:
-      active: true
-    Indentation:
-      active: true
-    MaximumLineLength:
-      active: true
-      maxLineLength: 140
+    functionPattern: '[a-z][a-zA-Z0-9]*'
+    ignoreOverridden: true
+  VariableNaming:
+    active: true
+    variablePattern: '[a-z][A-Za-z0-9]*'
+    privateVariablePattern: '(_)?[a-z][A-Za-z0-9]*'
+  PackageNaming:
+    active: true
+    packagePattern: '^[a-z]+(\.[a-z][a-z0-9_]*)*$'
+  MatchingDeclarationName:
+    active: true
 
+formatting:
+  active: true
+  FinalNewline:
+    active: true
+  Indentation:
+    active: true
+  MaximumLineLength:
+    active: true
+    maxLineLength: 140

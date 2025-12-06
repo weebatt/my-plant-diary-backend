@@ -9,6 +9,9 @@
 - Диаграмма и пояснения: `ARCHITECTURE.md:1` (PlantUML)
 - Основные элементы: Gateway, User/Diary/Dictionary, Orchestrator, Scheduler, Outbox Publisher, Adapter‑сервисы (Telegram, Avito, WebPush), RabbitMQ, PostgreSQL per‑service, RDF4J.
 
+## План реализации
+- План этапов и журнал прогресса: `docs/IMPLEMENTATION_PLAN.md:1`
+
 ## Модули
 - Contracts
   - `contracts` — общие DTO/события (kotlinx-serialization)
@@ -48,7 +51,7 @@
 - Переключение авторизации: `SECURITY_AUTH_ENABLED` (по умолчанию `false`), при `true` нужен `SECURITY_JWT_ISSUER_URI`.
 
 ## Принятые решения (актуально сейчас)
-- Messaging: RabbitMQ (Spring AMQP). Топология уточним позже.
+- Messaging: RabbitMQ (Spring AMQP). См. `docs/messaging.md:1` (формат, топология, конвенции).
 - HTTP: REST (Spring Web) + Springdoc OpenAPI во всех сервисах.
 - Persistence: Spring Data JPA + Liquibase (db/changelog per service), PostgreSQL.
 - Graph/Triple Store: RDF4J (подключено в dictionary-service).

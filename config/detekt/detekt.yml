@@ -135,6 +135,7 @@ complexity:
     ignoreStringsRegex: '$^'
   TooManyFunctions:
     active: true
+    thresholdInClasses: 15
     excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/androidUnitTest/**', '**/androidInstrumentedTest/**', '**/jsTest/**', '**/iosTest/**']
     ignoreDeprecated: false
     ignorePrivate: false

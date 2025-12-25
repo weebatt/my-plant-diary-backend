@@ -3,52 +3,37 @@
 [Быстрый старт (Getting Started)](docs/GETTING_STARTED.md)
 
 ## Обзор
-Мультисервисный backend (SOA) для MyPlantDiary. Сервисы общаются по REST и через брокер сообщений (RabbitMQ). Хранилища — PostgreSQL (per-service) и опционально Graph/Triple Store (RDF4J) для словаря растений. В качестве фреймворка используется Spring Boot. Общая сборочная логика — в `buildSrc`.
+Репозиторий переведён на монолитную архитектуру:
+- Монолитное приложение на Spring Boot: `apps/monolith` (HTTP API, Actuator).
+- Общие контракты (DTO/события): `contracts`.
+
+Исторические мультисервисные модули (SOA) удалены из сборки и документации.
 
 ## Архитектура
-- Диаграмма и пояснения: `ARCHITECTURE.md:1` (PlantUML)
-- Основные элементы: Gateway, User/Diary/Dictionary, Orchestrator, Scheduler, Outbox Publisher, Adapter‑сервисы (Telegram, Avito, WebPush), RabbitMQ, PostgreSQL per‑service, RDF4J.
+- Монолит: единое приложение (`apps/monolith`) с REST/API и возможностью постепенного наращивания доменов (user/diary/dictionary и т.п.).
+- Диаграмма и пояснения: `ARCHITECTURE.md:1` (схема монолита)
 
 ## План реализации
 - План этапов и журнал прогресса: `docs/IMPLEMENTATION_PLAN.md:1`
 
 ## Модули
+- Monolith
+  - `apps/monolith` — основное приложение (REST/API, Actuator). Включает лёгкие обёртки для AMQP‑паблиша и listener‑фабрики.
+
 - Contracts
-  - `contracts` — общие DTO/события (kotlinx-serialization)
-
-- Services (отдельные процессы)
-  - `services/gateway` — HTTP API + WS/SSE
-  - `services/user-service` — пользовательский домен
-  - `services/diary-service` — домен дневника
-  - `services/dictionary-service` — словарь растений
-  - `services/notification-orchestrator` — маршрутизация уведомлений
-  - `services/scheduler` — планирование ReminderDue
-  - `services/outbox-publisher` — публикация событий из outbox
-  - `services/adapters/telegram-service` — интеграция Telegram
-  - `services/adapters/avito-service` — интеграция Avito (объявления)
-  - `services/adapters/webpush-service` — интеграция Web Push
-
-- Infrastructure (общие клиенты/библиотеки)
-  - `infra/broker` — абстракции брокера
-  - `infra/stores/postgres` — доступ к PostgreSQL
-  - `infra/stores/graphdb` — доступ к графовому/трипл стору
-
-Примечание: шаблонные модули `app` и `core/*` удалены в пользу сервисной архитектуры.
+  - `contracts` — общие DTO/события (kotlinx‑serialization)
 
 ## Технологии и зависимости
-- Spring Boot (Web, Actuator, Security, OAuth2 Resource Server, AMQP, Data JPA)
-- RabbitMQ (Spring AMQP)
-- PostgreSQL, Liquibase (миграции per‑service)
-- RDF4J (словарь/таксономия)
-- Springdoc OpenAPI (UI + OpenAPI)
+- Spring Boot (Web, Actuator, AMQP)
+- RabbitMQ (Spring AMQP) — опционально; конфиг присутствует для совместимости
 - Detekt (линтинг Kotlin)
 - Version Catalog: `gradle/libs.versions.toml:1`
 
 ## Профили и конфигурация
 - Активный профиль: `SPRING_PROFILES_ACTIVE` (по умолчанию `dev`).
-- Секреты — через env (RabbitMQ, доступ к БД, JWT issuer и т.п.).
-- Конфиг каждого сервиса: `application.yml`, переопределения — `application-*.yml`.
-- Переключение авторизации: `SECURITY_AUTH_ENABLED` (по умолчанию `false`), при `true` нужен `SECURITY_JWT_ISSUER_URI`.
+- Секреты — через env (RabbitMQ и др.).
+- Переключение авторизации: `SECURITY_AUTH_ENABLED` (по умолчанию `false`).
+ - JWT параметры: `SECURITY_JWT_ISSUER`, `SECURITY_JWT_AUDIENCE`, `SECURITY_JWT_SECRET`.
 
 ## Принятые решения (актуально сейчас)
 - Messaging: RabbitMQ (Spring AMQP). См. `docs/messaging.md:1` (формат, топология, конвенции).
@@ -61,7 +46,8 @@
 - Коллекция и окружение: `postman/MyPlantDiary.postman_collection.json`, `postman/local.postman_environment.json`.
 
 ## Docker
-- Локальный запуск: см. [Быстрый старт](docs/GETTING_STARTED.md)
+- Локальный стек (RabbitMQ + Postgres + Monolith): `docker compose up --build`
+- RabbitMQ UI: `http://localhost:${RABBITMQ_MANAGEMENT_PORT:-15672}` (guest/guest по умолчанию)
 
 ## CI/CD
 - GitHub Actions: `.github/workflows/ci.yml:1` — Detekt + Gradle build на push/PR.
@@ -88,12 +74,28 @@
   - `ci: add commit message validation to CI`
 
 ## Документация API (OpenAPI)
-- Доступ к Swagger UI после появления контроллеров (см. адреса в [Быстрый старт](docs/GETTING_STARTED.md)).
+- Доступ к Swagger UI после появления контроллеров.
+- При включённой авторизации доступны:
+  - `POST /auth/register` (всегда открыт)
+  - `POST /auth/login` (в JWT‑режиме)
+  - `GET /me`, `GET /profile`, `PATCH /profile`, `POST /profile/password` (требуют JWT)
+- Публичные (без JWT): `GET /plants`, `GET /plants/{id}`, `GET /plants/recommendations`
+ - Календарь (JWT): `GET /calendar/day?date=YYYY-MM-DD`, `GET /calendar/week?start=YYYY-MM-DD`, `GET /calendar/month?year=YYYY&month=MM` (+ `page,size,sort`)
+
+## Быстрые примеры (curl)
+- Публичные растения:
+  - `curl "http://localhost:8080/plants?q=ficus&page=0&size=5&sort=-latinName"`
+- JWT режим:
+  - Логин админа: `curl -XPOST -H 'Content-Type: application/json' -d '{"email":"admin@example.com","password":"admin123"}' http://localhost:8080/auth/login`
+  - Добавить растение пользователя: `curl -XPOST -H "Authorization: Bearer <JWT>" -H 'Content-Type: application/json' -d '{"nickname":"Мой фикус"}' http://localhost:8080/diary/plants`
+  - Создать напоминание: `curl -XPOST -H "Authorization: Bearer <JWT>" -H 'Content-Type: application/json' -d '{"kind":"water","dueAt":"2030-01-01T10:00:00Z"}' http://localhost:8080/diary/reminders/<userPlantId>`
+  - Календарь (день): `curl -H "Authorization: Bearer <JWT>" "http://localhost:8080/calendar/day?date=2030-01-01&page=0&size=50&sort=dueAt"`
 
 ## Безопасность и секреты
 - Секреты не хардкодим. Используем переменные окружения/секрет‑сторы.
 - Docker Compose читает значения из `.env`. Шаблон: `.env.example:1`.
 
 ## Дальнейшие шаги
-- Формат сообщений (JSON/Avro/Proto) и топология RabbitMQ.
-- Миграции Liquibase и API контракты во всех сервисах.
+- Расширение API и доменных модулей (M1–M3).
+- Миграции Liquibase и подключение PostgreSQL (M1+).
+- Интеграционные тесты с Testcontainers (M5).

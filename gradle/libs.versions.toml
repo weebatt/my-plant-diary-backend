@@ -15,6 +15,9 @@ postgres = "42.7.4"
 jacksonKotlin = "2.17.2"
 rdf4j = "4.3.11"
 detekt = "1.23.8"
+springDotenv = "4.0.0"
+micrometer = "1.13.3"
+testcontainers = "1.20.2"
 
 [libraries]
 kotlinGradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
@@ -36,6 +39,8 @@ liquibaseCore = { module = "org.liquibase:liquibase-core", version.ref = "liquib
 jacksonModuleKotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jacksonKotlin" }
 springBootStarterSecurity = { module = "org.springframework.boot:spring-boot-starter-security", version.ref = "springBoot" }
 springBootStarterOAuth2ResourceServer = { module = "org.springframework.boot:spring-boot-starter-oauth2-resource-server", version.ref = "springBoot" }
+springDotenv = { module = "me.paulschwarz:spring-dotenv", version.ref = "springDotenv" }
+micrometerRegistryPrometheus = { module = "io.micrometer:micrometer-registry-prometheus", version.ref = "micrometer" }
 
 # RDF4J
 rdf4jRepositoryApi = { module = "org.eclipse.rdf4j:rdf4j-repository-api", version.ref = "rdf4j" }
@@ -46,6 +51,11 @@ rdf4jRioApi = { module = "org.eclipse.rdf4j:rdf4j-rio-api", version.ref = "rdf4j
 # OpenAPI
 springdocOpenapiUi = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "springdocOpenapi" }
 
+# Testcontainers
+testcontainersJunitJupiter = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
+testcontainersRabbitmq = { module = "org.testcontainers:rabbitmq", version.ref = "testcontainers" }
+testcontainersPostgresql = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
+
 # Libraries can be bundled together for easier import
 [bundles]
 kotlinxEcosystem = ["kotlinxDatetime", "kotlinxSerialization", "kotlinxCoroutines"]
@@ -55,4 +65,5 @@ kotlinxEcosystem = ["kotlinxDatetime", "kotlinxSerialization", "kotlinxCoroutine
  springBoot = { id = "org.springframework.boot", version.ref = "springBoot" }
  springDependencyManagement = { id = "io.spring.dependency-management", version.ref = "springDependencyManagement" }
  kotlinPluginSpring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotlin" }
+ kotlinPluginJpa = { id = "org.jetbrains.kotlin.plugin.jpa", version.ref = "kotlin" }
  detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }

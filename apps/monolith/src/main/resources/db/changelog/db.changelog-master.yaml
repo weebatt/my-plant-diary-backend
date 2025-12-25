@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/001-users.yaml
+  - include:
+      file: db/changelog/002-plants.yaml
+  - include:
+      file: db/changelog/003-diary.yaml

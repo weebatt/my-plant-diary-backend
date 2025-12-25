@@ -11,35 +11,32 @@
 - Скопируйте шаблон: `cp .env.example .env`
 - Заполните значения при необходимости (пароли БД, токены внешних сервисов и т.д.).
 - Docker Compose автоматически подхватит значения из `.env`.
+- Приложения Spring также автоматически загружают `.env` при старте (зависимость `spring-dotenv` добавлена во все сервисы). Это удобно для локального запуска через `bootRun`.
 
-## Запуск через Docker
-1. Собрать образы и поднять окружение:
-   - `docker compose build`
-   - `docker compose up`
-2. Проверка:
-   - Gateway: `http://localhost:${GATEWAY_PORT:-8080}/healthz`
-   - RabbitMQ UI: `http://localhost:15672` (guest/guest)
-3. Остановка: `docker compose down`
+## Запуск локального стека через Docker
+1. Подготовьте `.env`: `cp .env.example .env` (при необходимости поменяйте порты `GATEWAY_PORT`, `RABBITMQ_MANAGEMENT_PORT`).
+2. Соберите и запустите:
+   - `docker compose up --build`
+3. Проверка:
+   - Monolith: `http://localhost:${GATEWAY_PORT:-8080}/healthz`
+   - RabbitMQ UI: `http://localhost:${RABBITMQ_MANAGEMENT_PORT:-15672}` (guest/guest)
+4. Остановка: `docker compose down`
+
+## Мультисервисный вариант (SOA)
+Исторический вариант архитектуры удалён из сборки. Для локальной разработки используйте монолит.
 
 ## Альтернатива: запуск через Gradle (без Docker)
-- Пример:
-  - Gateway: `./gradlew :services:gateway:bootRun`
-  - User: `./gradlew :services:user-service:bootRun`
+- Монолит:
+  - `./gradlew :apps:monolith:bootRun`
 - По умолчанию активен профиль `dev`. Авторизация отключена (`SECURITY_AUTH_ENABLED=false`).
+ - Для локальной сборки необходим JDK 21 (см. Gradle toolchain).
 - Чтобы включить JWT Resource Server, задайте:
   - `SECURITY_AUTH_ENABLED=true`
   - `SECURITY_JWT_ISSUER_URI=<issuer-uri>`
 
 ## Документация OpenAPI
-- Включена Springdoc UI во всех сервисах (когда появятся контроллеры):
-  - Gateway: `http://localhost:${GATEWAY_PORT:-8080}/swagger-ui/index.html`
-  - User: `http://localhost:${USER_PORT:-8081}/swagger-ui/index.html`
-  - Diary: `http://localhost:${DIARY_PORT:-8082}/swagger-ui/index.html`
-  - Dictionary: `http://localhost:${DICTIONARY_PORT:-8083}/swagger-ui/index.html`
-  - Orchestrator: `http://localhost:${ORCHESTRATOR_PORT:-8091}/swagger-ui/index.html`
-  - Scheduler: `http://localhost:${SCHEDULER_PORT:-8092}/swagger-ui/index.html`
-  - Telegram Adapter: `http://localhost:${TELEGRAM_PORT:-8093}/swagger-ui/index.html`
-  - Avito Adapter: `http://localhost:${AVITO_PORT:-8094}/swagger-ui/index.html`
+Включена Springdoc UI (после появления контроллеров):
+  - Monolith: `http://localhost:${GATEWAY_PORT:-8080}/swagger-ui/index.html`
 
 ## Postman
 - Коллекция и окружение:

@@ -44,3 +44,8 @@ bin/
 ### Mac OS ###
 .DS_Store
 /.idea/
+
+# Dotenv files (keep example only)
+.env
+.env.*
+!.env.example

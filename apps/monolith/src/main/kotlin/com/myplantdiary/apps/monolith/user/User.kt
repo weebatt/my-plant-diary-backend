@@ -1,0 +1,31 @@
+package com.myplantdiary.apps.monolith.user
+
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
+import jakarta.persistence.Id
+import jakarta.persistence.Table
+import java.time.OffsetDateTime
+import java.util.UUID
+
+@Entity
+@Table(name = "users")
+data class User(
+    @Id
+    val id: UUID,
+    @Column(nullable = false, unique = true)
+    val email: String,
+    @Column(name = "password_hash", nullable = false)
+    val passwordHash: String,
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    val role: Role,
+    @Column(name = "created_at", nullable = false)
+    val createdAt: OffsetDateTime,
+    @Column(name = "updated_at", nullable = false)
+    val updatedAt: OffsetDateTime,
+)
+
+enum class Role { USER, ADMIN }
+

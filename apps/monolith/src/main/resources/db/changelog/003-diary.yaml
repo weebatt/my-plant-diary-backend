@@ -1,0 +1,34 @@
+databaseChangeLog:
+  - changeSet:
+      id: 003-diary
+      author: mpd
+      changes:
+        - createTable:
+            tableName: user_plants
+            columns:
+              - column: { name: id, type: UUID, constraints: { primaryKey: true, nullable: false } }
+              - column: { name: user_id, type: UUID, constraints: { nullable: false } }
+              - column: { name: plant_id, type: UUID, constraints: { nullable: true } }
+              - column: { name: nickname, type: VARCHAR(255), constraints: { nullable: true } }
+              - column: { name: created_at, type: TIMESTAMP WITH TIME ZONE, constraints: { nullable: false } }
+              - column: { name: updated_at, type: TIMESTAMP WITH TIME ZONE, constraints: { nullable: false } }
+        - createTable:
+            tableName: care_entries
+            columns:
+              - column: { name: id, type: UUID, constraints: { primaryKey: true, nullable: false } }
+              - column: { name: user_id, type: UUID, constraints: { nullable: false } }
+              - column: { name: user_plant_id, type: UUID, constraints: { nullable: false } }
+              - column: { name: kind, type: VARCHAR(64), constraints: { nullable: false } } # water, fertilize, mist, repot
+              - column: { name: notes, type: TEXT, constraints: { nullable: true } }
+              - column: { name: occurred_at, type: TIMESTAMP WITH TIME ZONE, constraints: { nullable: false } }
+              - column: { name: created_at, type: TIMESTAMP WITH TIME ZONE, constraints: { nullable: false } }
+        - createTable:
+            tableName: reminders
+            columns:
+              - column: { name: id, type: UUID, constraints: { primaryKey: true, nullable: false } }
+              - column: { name: user_id, type: UUID, constraints: { nullable: false } }
+              - column: { name: user_plant_id, type: UUID, constraints: { nullable: false } }
+              - column: { name: kind, type: VARCHAR(64), constraints: { nullable: false } }
+              - column: { name: due_at, type: TIMESTAMP WITH TIME ZONE, constraints: { nullable: false } }
+              - column: { name: created_at, type: TIMESTAMP WITH TIME ZONE, constraints: { nullable: false } }
+              - column: { name: updated_at, type: TIMESTAMP WITH TIME ZONE, constraints: { nullable: false } }

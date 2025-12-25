@@ -1,0 +1,64 @@
+spring:
+  application:
+    name: telegram-adapter
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USER:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
+    publisher-confirm-type: correlated
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://postgres:5432/${POSTGRES_DB:mpd}}
+    username: ${POSTGRES_USER:mpd}
+    password: ${POSTGRES_PASSWORD:mpd}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  liquibase:
+    change-log: classpath:/db/changelog/db.changelog-master.yaml
+
+server:
+  port: ${TELEGRAM_PORT:8081}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,env,metrics,prometheus
+  endpoint:
+    health:
+      show-details: when_authorized
+  metrics:
+    tags:
+      application: ${spring.application.name}
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+
+app:
+  messaging:
+    enabled: ${APP_MESSAGING_ENABLED:true}
+    prefetch: ${APP_MESSAGING_PREFETCH:20}
+
+telegram:
+  botToken: ${TELEGRAM_BOT_TOKEN:}
+  # Для webhook: укажите публичный URL, настроив бота через BotFather вручную (setWebhook)
+  webhookEnabled: ${TELEGRAM_WEBHOOK_ENABLED:false}
+  webhookPath: /telegram/webhook
+  pollingEnabled: ${TELEGRAM_POLLING_ENABLED:false}
+  pollingDelayMs: ${TELEGRAM_POLLING_DELAY_MS:2000}
+
+security:
+  auth:
+    enabled: ${SECURITY_AUTH_ENABLED:false}
+    jwt:
+      issuer: ${SECURITY_JWT_ISSUER:http://localhost}
+      audience: ${SECURITY_JWT_AUDIENCE:mpd}
+      secret: ${SECURITY_JWT_SECRET:dev-secret-change-me}

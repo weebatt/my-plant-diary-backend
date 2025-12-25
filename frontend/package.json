@@ -1,0 +1,30 @@
+{
+  "name": "my-plant-diary-frontend",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --port 5173",
+    "lint": "eslint .",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "axios": "^1.7.7",
+    "element-plus": "^2.8.8",
+    "pinia": "^2.2.6",
+    "vue": "^3.5.12",
+    "vue-router": "^4.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.1",
+    "@vitejs/plugin-vue": "^5.1.4",
+    "eslint": "^9.14.0",
+    "eslint-plugin-vue": "^9.29.1",
+    "typescript": "~5.6.3",
+    "vite": "^5.4.10",
+    "vitest": "^2.1.4"
+  }
+}
+

@@ -15,6 +15,58 @@
           "path": ["healthz"]
         }
       }
+    },
+    {
+      "name": "Calendar Day",
+      "request": { "method": "GET", "header": [{"key":"Authorization","value":"Bearer {{jwt}}"}],
+        "url": {"raw":"{{gatewayBaseUrl}}/calendar/day?date=2030-01-01","host":["{{gatewayBaseUrl}}"],"path":["calendar","day"],"query":[{"key":"date","value":"2030-01-01"}]}
+      }
+    },
+    {
+      "name": "Calendar Week",
+      "request": { "method": "GET", "header": [{"key":"Authorization","value":"Bearer {{jwt}}"}],
+        "url": {"raw":"{{gatewayBaseUrl}}/calendar/week?start=2030-01-01","host":["{{gatewayBaseUrl}}"],"path":["calendar","week"],"query":[{"key":"start","value":"2030-01-01"}]}
+      }
+    },
+    {
+      "name": "Calendar Month",
+      "request": { "method": "GET", "header": [{"key":"Authorization","value":"Bearer {{jwt}}"}],
+        "url": {"raw":"{{gatewayBaseUrl}}/calendar/month?year=2030&month=1","host":["{{gatewayBaseUrl}}"],"path":["calendar","month"],"query":[{"key":"year","value":"2030"},{"key":"month","value":"1"}]}
+      }
+    }
+    {
+      "name": "Auth Register",
+      "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}],
+        "body": {"mode":"raw","raw":"{\n  \"email\": \"user@example.com\",\n  \"password\": \"password123\"\n}"},
+        "url": {"raw":"{{gatewayBaseUrl}}/auth/register","host":["{{gatewayBaseUrl}}"],"path":["auth","register"]}
+      }
+    },
+    {
+      "name": "Auth Login",
+      "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}],
+        "body": {"mode":"raw","raw":"{\n  \"email\": \"{{adminEmail}}\",\n  \"password\": \"{{adminPassword}}\"\n}"},
+        "url": {"raw":"{{gatewayBaseUrl}}/auth/login","host":["{{gatewayBaseUrl}}"],"path":["auth","login"]}
+      }
+    },
+    {
+      "name": "Plants List (public)",
+      "request": { "method": "GET", "header": [],
+        "url": {"raw":"{{gatewayBaseUrl}}/plants?q=ficus&page=0&size=10&sort=-latinName","host":["{{gatewayBaseUrl}}"],"path":["plants"],"query":[{"key":"q","value":"ficus"},{"key":"page","value":"0"},{"key":"size","value":"10"},{"key":"sort","value":"-latinName"}]}
+      }
+    },
+    {
+      "name": "Diary: Add User Plant",
+      "request": { "method": "POST", "header": [{"key":"Authorization","value":"Bearer {{jwt}}"},{"key":"Content-Type","value":"application/json"}],
+        "body": {"mode":"raw","raw":"{\n  \"nickname\": \"Мой фикус\"\n}"},
+        "url": {"raw":"{{gatewayBaseUrl}}/diary/plants","host":["{{gatewayBaseUrl}}"],"path":["diary","plants"]}
+      }
+    },
+    {
+      "name": "Diary: Create Reminder",
+      "request": { "method": "POST", "header": [{"key":"Authorization","value":"Bearer {{jwt}}"},{"key":"Content-Type","value":"application/json"}],
+        "body": {"mode":"raw","raw":"{\n  \"kind\": \"water\",\n  \"dueAt\": \"2030-01-01T10:00:00Z\"\n}"},
+        "url": {"raw":"{{gatewayBaseUrl}}/diary/reminders/{{userPlantId}}","host":["{{gatewayBaseUrl}}"],"path":["diary","reminders", "{{userPlantId}}"]}
+      }
     }
   ],
   "variable": []

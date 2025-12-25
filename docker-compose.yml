@@ -1,203 +1,65 @@
-version: "3.9"
-
 services:
   rabbitmq:
     image: rabbitmq:3.13-management
     container_name: mpd-rabbitmq
     ports:
       - "${RABBITMQ_PORT:-5672}:5672"
-      - "15672:15672"
-
-  user-postgres:
-    image: postgres:16
-    container_name: mpd-user-postgres
+      - "${RABBITMQ_MANAGEMENT_PORT:-15672}:15672"
     environment:
-      POSTGRES_DB: user_service
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${USER_DB_PASSWORD}
-    ports:
-      - "5433:5432"
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-guest}
 
-  diary-postgres:
+  postgres:
     image: postgres:16
-    container_name: mpd-diary-postgres
-    environment:
-      POSTGRES_DB: diary_service
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${DIARY_DB_PASSWORD}
+    container_name: mpd-postgres
     ports:
-      - "5434:5432"
-
-  dictionary-postgres:
-    image: postgres:16
-    container_name: mpd-dictionary-postgres
+      - "${POSTGRES_PORT:-5432}:5432"
     environment:
-      POSTGRES_DB: dictionary_service
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${DICTIONARY_DB_PASSWORD}
-    ports:
-      - "5435:5432"
+      POSTGRES_DB: ${POSTGRES_DB:-mpd}
+      POSTGRES_USER: ${POSTGRES_USER:-mpd}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-mpd}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-mpd}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
-  outbox-postgres:
-    image: postgres:16
-    container_name: mpd-outbox-postgres
-    environment:
-      POSTGRES_DB: outbox_publisher
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${OUTBOX_DB_PASSWORD}
-    ports:
-      - "5436:5432"
-
-  gateway:
+  monolith:
     build:
       context: .
-      dockerfile: services/gateway/Dockerfile
-    container_name: mpd-gateway
+      dockerfile: apps/monolith/Dockerfile
+    container_name: mpd-monolith
+    depends_on:
+      - rabbitmq
+      - postgres
     environment:
       SPRING_PROFILES_ACTIVE: dev
-      RABBITMQ_HOST: rabbitmq
       SERVER_PORT: ${GATEWAY_PORT:-8080}
+      DB_HOST: postgres
       SECURITY_AUTH_ENABLED: ${SECURITY_AUTH_ENABLED:-false}
+      APP_MESSAGING_ENABLED: ${APP_MESSAGING_ENABLED:-true}
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-guest}
     ports:
       - "${GATEWAY_PORT:-8080}:8080"
-    depends_on:
-      - rabbitmq
-
-  user-service:
-    build:
-      context: .
-      dockerfile: services/user-service/Dockerfile
-    container_name: mpd-user-service
-    environment:
-      SPRING_PROFILES_ACTIVE: dev
-      DB_URL: jdbc:postgresql://user-postgres:5432/user_service
-      DB_USER: ${POSTGRES_USER}
-      DB_PASSWORD: ${USER_DB_PASSWORD}
-      RABBITMQ_HOST: rabbitmq
-      SERVER_PORT: ${USER_PORT:-8081}
-      SECURITY_AUTH_ENABLED: ${SECURITY_AUTH_ENABLED:-false}
-    ports:
-      - "${USER_PORT:-8081}:8081"
-    depends_on:
-      - rabbitmq
-      - user-postgres
-
-  diary-service:
-    build:
-      context: .
-      dockerfile: services/diary-service/Dockerfile
-    container_name: mpd-diary-service
-    environment:
-      SPRING_PROFILES_ACTIVE: dev
-      DB_URL: jdbc:postgresql://diary-postgres:5432/diary_service
-      DB_USER: ${POSTGRES_USER}
-      DB_PASSWORD: ${DIARY_DB_PASSWORD}
-      RABBITMQ_HOST: rabbitmq
-      SERVER_PORT: ${DIARY_PORT:-8082}
-      SECURITY_AUTH_ENABLED: ${SECURITY_AUTH_ENABLED:-false}
-    ports:
-      - "${DIARY_PORT:-8082}:8082"
-    depends_on:
-      - rabbitmq
-      - diary-postgres
-
-  dictionary-service:
-    build:
-      context: .
-      dockerfile: services/dictionary-service/Dockerfile
-    container_name: mpd-dictionary-service
-    environment:
-      SPRING_PROFILES_ACTIVE: dev
-      DB_URL: jdbc:postgresql://dictionary-postgres:5432/dictionary_service
-      DB_USER: ${POSTGRES_USER}
-      DB_PASSWORD: ${DICTIONARY_DB_PASSWORD}
-      RABBITMQ_HOST: rabbitmq
-      GRAPHDB_ENDPOINT: http://localhost:7200
-      SERVER_PORT: ${DICTIONARY_PORT:-8083}
-      SECURITY_AUTH_ENABLED: ${SECURITY_AUTH_ENABLED:-false}
-    ports:
-      - "${DICTIONARY_PORT:-8083}:8083"
-    depends_on:
-      - rabbitmq
-      - dictionary-postgres
-
-  notification-orchestrator:
-    build:
-      context: .
-      dockerfile: services/notification-orchestrator/Dockerfile
-    container_name: mpd-notification-orchestrator
-    environment:
-      SPRING_PROFILES_ACTIVE: dev
-      RABBITMQ_HOST: rabbitmq
-      SERVER_PORT: ${ORCHESTRATOR_PORT:-8091}
-      SECURITY_AUTH_ENABLED: ${SECURITY_AUTH_ENABLED:-false}
-    ports:
-      - "${ORCHESTRATOR_PORT:-8091}:8091"
-    depends_on:
-      - rabbitmq
-
-  scheduler:
-    build:
-      context: .
-      dockerfile: services/scheduler/Dockerfile
-    container_name: mpd-scheduler
-    environment:
-      SPRING_PROFILES_ACTIVE: dev
-      RABBITMQ_HOST: rabbitmq
-      SERVER_PORT: ${SCHEDULER_PORT:-8092}
-      SECURITY_AUTH_ENABLED: ${SECURITY_AUTH_ENABLED:-false}
-    ports:
-      - "${SCHEDULER_PORT:-8092}:8092"
-    depends_on:
-      - rabbitmq
-
-  outbox-publisher:
-    build:
-      context: .
-      dockerfile: services/outbox-publisher/Dockerfile
-    container_name: mpd-outbox-publisher
-    environment:
-      SPRING_PROFILES_ACTIVE: dev
-      DB_URL: jdbc:postgresql://outbox-postgres:5432/outbox_publisher
-      DB_USER: ${POSTGRES_USER}
-      DB_PASSWORD: ${OUTBOX_DB_PASSWORD}
-      RABBITMQ_HOST: rabbitmq
-      SERVER_PORT: ${OUTBOX_PORT:-8090}
-      SECURITY_AUTH_ENABLED: ${SECURITY_AUTH_ENABLED:-false}
-    ports:
-      - "${OUTBOX_PORT:-8090}:8090"
-    depends_on:
-      - rabbitmq
-      - outbox-postgres
 
   telegram-adapter:
     build:
       context: .
-      dockerfile: services/adapters/telegram-service/Dockerfile
+      dockerfile: apps/telegram-adapter/Dockerfile
     container_name: mpd-telegram-adapter
-    environment:
-      SPRING_PROFILES_ACTIVE: dev
-      RABBITMQ_HOST: rabbitmq
-      SERVER_PORT: ${TELEGRAM_PORT:-8093}
-      SECURITY_AUTH_ENABLED: ${SECURITY_AUTH_ENABLED:-false}
-    ports:
-      - "${TELEGRAM_PORT:-8093}:8093"
     depends_on:
       - rabbitmq
-
-  avito-adapter:
-    build:
-      context: .
-      dockerfile: services/adapters/avito-service/Dockerfile
-    container_name: mpd-avito-adapter
     environment:
       SPRING_PROFILES_ACTIVE: dev
+      APP_MESSAGING_ENABLED: ${APP_MESSAGING_ENABLED:-true}
       RABBITMQ_HOST: rabbitmq
-      SERVER_PORT: ${AVITO_PORT:-8094}
-      AVITO_API_BASE_URL: ${AVITO_API_BASE_URL}
-      AVITO_API_TOKEN: ${AVITO_API_TOKEN}
-      SECURITY_AUTH_ENABLED: ${SECURITY_AUTH_ENABLED:-false}
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-guest}
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      TELEGRAM_WEBHOOK_ENABLED: ${TELEGRAM_WEBHOOK_ENABLED:-false}
     ports:
-      - "${AVITO_PORT:-8094}:8094"
-    depends_on:
-      - rabbitmq
+      - "${TELEGRAM_PORT:-8081}:8081"

@@ -39,3 +39,20 @@ jobs:
 
       - name: Build & Test
         run: ./gradlew build --no-daemon
+
+      - name: Jacoco Report
+        run: ./gradlew :apps:monolith:jacocoTestReport --no-daemon
+
+      - name: Upload Jacoco HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-html
+          path: apps/monolith/build/reports/jacoco/test/html
+
+      - name: Upload Jacoco XML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-xml
+          path: apps/monolith/build/reports/jacoco/test/jacocoTestReport.xml

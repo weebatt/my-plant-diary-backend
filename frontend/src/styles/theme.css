@@ -1,0 +1,111 @@
+/* Global Plant-Themed Styles */
+:root {
+  /* Brand greens */
+  --brand-900: #1b4d3e;
+  --brand-800: #1f5e47;
+  --brand-700: #246e50;
+  --brand-600: #2a7f59;
+  --brand-500: #2f9063; /* primary */
+  --brand-400: #54a67d;
+  --brand-300: #7bbd99;
+  --brand-200: #a6d6bb;
+  --brand-100: #d6efdf;
+
+  /* Neutrals */
+  --ink-900: #1f2823;
+  --ink-700: #33443b;
+  --ink-500: #4b5e53;
+  --ink-400: #6b7d72;
+  --ink-300: #8fa097;
+  --ink-200: #c7d0cb;
+  --ink-100: #e9efec;
+
+  /* Surfaces */
+  --surface: #ffffff;
+  --background: #f6fbf7;
+
+  /* Radius + shadow */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
+  --shadow-md: 0 8px 24px rgba(0,0,0,0.08);
+
+  /* Element Plus overrides */
+  --el-color-primary: var(--brand-500);
+  --el-color-success: #3ba776;
+  --el-color-warning: #caa843;
+  --el-color-danger: #c44d4d;
+  --el-border-radius-base: var(--radius-sm);
+}
+
+/* Base */
+html, body, #app { height: 100%; }
+html, body { margin: 0; padding: 0; }
+body {
+  color: var(--ink-700);
+  background: radial-gradient(1200px 800px at 100% -200px, var(--brand-100), transparent 60%),
+              radial-gradient(800px 600px at -200px 100%, var(--brand-200), transparent 60%),
+              var(--background);
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  line-height: 1.45;
+}
+
+a { color: var(--brand-600); text-decoration: none; }
+a:hover { color: var(--brand-700); text-decoration: underline; }
+
+/* Containers */
+.container {
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+/* Generic card surface */
+.card {
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--ink-100);
+}
+
+/* Panel card (Element Plus wrapper helper) */
+.panel-card :deep(.el-card) {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--ink-100);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Hero banner */
+.hero {
+  background: radial-gradient(800px 400px at 10% -100px, rgba(255,255,255,0.18), rgba(255,255,255,0)),
+              linear-gradient(180deg, var(--brand-600), var(--brand-500));
+  color: #fff;
+  padding: 24px 0 18px;
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+  box-shadow: var(--shadow-sm);
+}
+.hero .hero-inner { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; }
+.hero .title { font-size: 24px; font-weight: 700; letter-spacing: .2px; }
+.hero .subtitle { opacity: .9; margin-top: 4px; }
+.hero .actions > * + * { margin-left: 8px; }
+
+/* Utilities */
+.mb-1 { margin-bottom: 8px; }
+.mb-2 { margin-bottom: 12px; }
+.mb-3 { margin-bottom: 16px; }
+.mb-4 { margin-bottom: 24px; }
+
+/* Header theme helpers */
+.header-sheen {
+  background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0));
+}
+
+/* Subtle scrollbar theming */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--brand-300) transparent;
+}
+*::-webkit-scrollbar { height: 10px; width: 10px; }
+*::-webkit-scrollbar-thumb { background: var(--brand-300); border-radius: 8px; }
+*::-webkit-scrollbar-track { background: transparent; }

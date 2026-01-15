@@ -13,6 +13,7 @@ import java.net.URL
 @ConditionalOnProperty(prefix = "telegram", name = ["pollingEnabled"], havingValue = "true")
 class PollingRunner(
     private val registry: ChatRegistry,
+    private val tokenValidator: BindTokenValidator,
     @Value("\${telegram.botToken}") private val botToken: String,
     @Value("\${telegram.pollingDelayMs:2000}") private val delayMs: Long
 ) : ApplicationRunner {
@@ -23,21 +24,30 @@ class PollingRunner(
         log.info("Старт polling Telegram updates")
         while (true) {
             try {
-                val url = URL("https://api.telegram.org/bot$botToken/getUpdates?offset=${lastUpdateId + 1}")
+                val url = URL("https://api.telegram.org/bot$botToken/getUpdates?offset=${lastUpdateId + 1}&timeout=25")
                 val conn = url.openConnection() as HttpURLConnection
                 conn.connectTimeout = 5000
-                conn.readTimeout = 5000
-                val text = conn.inputStream.bufferedReader().use { it.readText() }
-                // очень упрощённый парсинг: ищем `/start <userId>` и chat.id
-                val updates = text.lines().filter { it.contains("/start ") && it.contains("chat") }
-                updates.forEach { line ->
-                    val chatId = Regex(""""id":(\d+)""").find(line)?.groupValues?.get(1)?.toLongOrNull()
-                    val userId = Regex("""/start ([a-zA-Z0-9-]+)""").find(line)?.groupValues?.get(1)
-                    val updId = Regex(""""update_id":(\d+)""").find(line)?.groupValues?.get(1)?.toLongOrNull()
-                    if (chatId != null && !userId.isNullOrBlank()) {
-                        registry.put(userId, chatId)
-                    }
+                conn.readTimeout = 30000
+                val body = conn.inputStream.bufferedReader().use { it.readText() }
+                // Парсим блочно: находим update_id, chat.id и текст `/start <arg>` в одном совпадении
+                val pattern = Regex(
+                    """"update_id"\s*:\s*(\d+).*?"message".*?"chat"\s*:\s*\{[^}]*"id"\s*:\s*(\d+).*?"text"\s*:\s*"/start\s+([^\"]+)"""",
+                    setOf(RegexOption.DOT_MATCHES_ALL)
+                )
+                pattern.findAll(body).forEach { m ->
+                    val updId = m.groupValues[1].toLongOrNull()
+                    val chatId = m.groupValues[2].toLongOrNull()
+                    val arg = m.groupValues[3]
                     if (updId != null) lastUpdateId = maxOf(lastUpdateId, updId)
+                    if (chatId != null && arg.isNotBlank()) {
+                        val userId = if (arg.contains('.')) {
+                            val res = tokenValidator.validate(arg)
+                            if (res.ok) res.userId else null
+                        } else arg
+                        if (!userId.isNullOrBlank()) {
+                            registry.put(userId, chatId)
+                        }
+                    }
                 }
             } catch (e: Exception) {
                 log.warn("Polling error", e)
@@ -46,4 +56,3 @@ class PollingRunner(
         }
     }
 }
-

@@ -49,6 +49,9 @@ app:
     enabled: ${APP_MESSAGING_ENABLED:false}
     prefetch: ${APP_MESSAGING_PREFETCH:20}
     eventsPattern: ${APP_MESSAGING_EVENTS_PATTERN:#}
+  notifications:
+    schedulerEnabled: ${APP_NOTIFICATIONS_SCHEDULER_ENABLED:false}
+    schedulerIntervalMs: ${APP_NOTIFICATIONS_SCHEDULER_INTERVAL_MS:60000}
 
 security:
   auth:

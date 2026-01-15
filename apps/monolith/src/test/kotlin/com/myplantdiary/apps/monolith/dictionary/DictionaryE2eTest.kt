@@ -15,7 +15,7 @@ import org.springframework.test.context.DynamicPropertySource
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
     properties = [
-        "security.auth.enabled=false",
+        "security.auth.enabled=true",
         "APP_MESSAGING_ENABLED=false"
     ])
 @ActiveProfiles("test")

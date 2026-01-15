@@ -22,6 +22,10 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
   liquibase:
     change-log: classpath:/db/changelog/db.changelog-master.yaml
+    # Use dedicated changelog tables to avoid race/conflicts
+    # when multiple services use Liquibase on the same database.
+    database-change-log-table: databasechangelog_telegram
+    database-change-log-lock-table: databasechangeloglock_telegram
 
 server:
   port: ${TELEGRAM_PORT:8081}

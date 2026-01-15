@@ -7,7 +7,7 @@
           <div class="subtitle">What’s due soon for your plants</div>
         </div>
         <div class="actions">
-          <el-form inline @submit.prevent>
+          <el-form inline @submit.prevent class="toolbar">
             <el-form-item label="Before">
               <el-date-picker v-model="before" type="date" placeholder="Pick a day" format="YYYY-MM-DD" value-format="YYYY-MM-DD" />
             </el-form-item>
@@ -43,7 +43,7 @@ async function load() {
   const params: any = {}
   if (before.value) params.before = before.value
   const { data } = await api.get('/diary/reminders/due', { params })
-  rows.value = Array.isArray(data) ? data : (data.content ?? [])
+  rows.value = Array.isArray(data) ? data : (data.items ?? data.content ?? [])
 }
 
 async function complete(reminderId: string) {
@@ -61,4 +61,6 @@ onMounted(() => {
 <style scoped>
 .mt-1 { margin-top: 8px; }
 .mt-2 { margin-top: 16px; }
+.toolbar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.toolbar :deep(.el-form-item) { margin-bottom: 0; }
 </style>

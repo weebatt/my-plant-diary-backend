@@ -22,10 +22,10 @@ import java.util.UUID
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
     properties = [
         "security.auth.enabled=true",
-        "security.auth.jwt.secret=test-secret",
+        "security.auth.jwt.secret=qVzVUv4QH5BYfXm80rsCG6F2b3gcwnOQwcFtsYPzEBI",
         "security.auth.jwt.issuer=http://localhost",
         "security.auth.jwt.audience=mpd",
-        "APP_MESSAGING_ENABLED=false",
+        "APP_MESSAGING_ENABLED=true",
         "SEED_ADMIN_EMAIL=admin@example.com",
         "SEED_ADMIN_PASSWORD=admin123"
     ])

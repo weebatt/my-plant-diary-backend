@@ -81,7 +81,7 @@ a:hover { color: var(--brand-700); text-decoration: underline; }
   background: radial-gradient(800px 400px at 10% -100px, rgba(255,255,255,0.18), rgba(255,255,255,0)),
               linear-gradient(180deg, var(--brand-600), var(--brand-500));
   color: #fff;
-  padding: 24px 0 18px;
+  padding: 24px 16px 18px; /* add horizontal breathing room */
   border-bottom: 1px solid rgba(255,255,255,0.12);
   box-shadow: var(--shadow-sm);
 }

@@ -1,10 +1,16 @@
 <template>
   <div>
     <h2>Calendar — Month</h2>
-    <el-form inline @submit.prevent>
-      <el-input v-model.number="year" type="number" placeholder="Year" style="width:120px" />
-      <el-input v-model.number="month" type="number" placeholder="Month" style="width:120px" />
-      <el-button class="ml-1" type="primary" @click="load">Load</el-button>
+    <el-form inline @submit.prevent class="toolbar">
+      <el-form-item label="Year">
+        <el-input v-model.number="year" type="number" placeholder="Year" style="width:120px" />
+      </el-form-item>
+      <el-form-item label="Month">
+        <el-input v-model.number="month" type="number" placeholder="Month" style="width:120px" />
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="load">Load</el-button>
+      </el-form-item>
     </el-form>
     <pre class="mt-1">{{ JSON.stringify(data, null, 2) }}</pre>
   </div>
@@ -28,6 +34,6 @@ onMounted(load)
 
 <style scoped>
 .mt-1 { margin-top: 8px; }
-.ml-1 { margin-left: 8px; }
+.toolbar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.toolbar :deep(.el-form-item) { margin-bottom: 0; }
 </style>
-

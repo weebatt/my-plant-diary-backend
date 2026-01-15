@@ -22,8 +22,8 @@ import java.util.UUID
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
     properties = [
         "security.auth.enabled=true",
-        "security.auth.jwt.secret=test-secret",
-        "APP_MESSAGING_ENABLED=false",
+        "security.auth.jwt.secret=qVzVUv4QH5BYfXm80rsCG6F2b3gcwnOQwcFtsYPzEBI",
+        "APP_MESSAGING_ENABLED=true",
         "SEED_ADMIN_EMAIL=admin@example.com",
         "SEED_ADMIN_PASSWORD=admin123"
     ])

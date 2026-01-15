@@ -22,7 +22,7 @@ import { api } from '@/api/client'
 const rows = ref<any[]>([])
 async function load() {
   const { data } = await api.get('/plants', { params: { page: 0, size: 50 } })
-  rows.value = data.content ?? data
+  rows.value = Array.isArray(data) ? data : (data.items ?? data.content ?? [])
 }
 onMounted(load)
 </script>
@@ -30,4 +30,3 @@ onMounted(load)
 <style scoped>
 .mb-2 { margin-bottom: 12px; }
 </style>
-

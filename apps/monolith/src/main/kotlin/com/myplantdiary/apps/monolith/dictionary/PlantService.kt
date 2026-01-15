@@ -44,8 +44,8 @@ class PlantService(
             id = UUID.randomUUID(),
             latinName = ln,
             commonName = commonName?.trim()?.ifBlank { null },
-            light = light?.trim()?.ifBlank { null },
-            water = water?.trim()?.ifBlank { null },
+            light = light?.trim()?.lowercase()?.ifBlank { null },
+            water = water?.trim()?.lowercase()?.ifBlank { null },
             minTempC = minTempC,
             maxTempC = maxTempC,
             notes = notes?.trim()?.ifBlank { null },
@@ -69,8 +69,8 @@ class PlantService(
         val now = OffsetDateTime.now(ZoneOffset.UTC)
         val updated = existing.copy(
             commonName = commonName?.trim()?.ifBlank { null } ?: existing.commonName,
-            light = light?.trim()?.ifBlank { null } ?: existing.light,
-            water = water?.trim()?.ifBlank { null } ?: existing.water,
+            light = light?.trim()?.lowercase()?.ifBlank { null } ?: existing.light,
+            water = water?.trim()?.lowercase()?.ifBlank { null } ?: existing.water,
             minTempC = minTempC ?: existing.minTempC,
             maxTempC = maxTempC ?: existing.maxTempC,
             notes = notes?.trim()?.ifBlank { null } ?: existing.notes,

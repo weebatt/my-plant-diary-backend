@@ -5,3 +5,11 @@ databaseChangeLog:
       file: db/changelog/002-plants.yaml
   - include:
       file: db/changelog/003-diary.yaml
+  - include:
+      file: db/changelog/004-reminders-completed.yaml
+  - include:
+      file: db/changelog/005-reminders-notes.yaml
+  - include:
+      file: db/changelog/006-reminders-notified.yaml
+  - include:
+      file: db/changelog/007-link-tokens.yaml

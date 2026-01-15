@@ -21,7 +21,9 @@ data class CalendarEntry(
     val dueAt: String,
     val nickname: String?,
     val plantLatinName: String?,
-    val plantCommonName: String?
+    val plantCommonName: String?,
+    val completed: Boolean,
+    val notes: String?,
 )
 
 @Service
@@ -67,7 +69,9 @@ class CalendarService(
             dueAt = dueAt.toString(),
             nickname = up?.nickname,
             plantLatinName = plant?.latinName,
-            plantCommonName = plant?.commonName
+            plantCommonName = plant?.commonName,
+            completed = completed,
+            notes = notes,
         )
     }
 }

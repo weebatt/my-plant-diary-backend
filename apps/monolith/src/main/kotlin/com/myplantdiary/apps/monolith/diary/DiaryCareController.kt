@@ -46,4 +46,15 @@ class DiaryCareController(
         val created = diary.addCareEntry(userId, userPlantId, req.kind, req.notes, occurred)
         return ResponseEntity.ok(created)
     }
+
+    @DeleteMapping("/{userPlantId}/{careId}")
+    fun delete(
+        @AuthenticationPrincipal jwt: Jwt,
+        @PathVariable userPlantId: UUID,
+        @PathVariable careId: UUID
+    ): ResponseEntity<Map<String, String>> {
+        val userId = UUID.fromString(jwt.subject)
+        diary.deleteCareEntry(userId, userPlantId, careId)
+        return ResponseEntity.ok(mapOf("status" to "deleted"))
+    }
 }

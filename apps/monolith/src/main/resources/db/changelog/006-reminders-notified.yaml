@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: 006-reminders-notified
+      author: mpd
+      changes:
+        - addColumn:
+            tableName: reminders
+            columns:
+              - column:
+                  name: notified
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false

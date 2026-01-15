@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: 004-reminders-completed
+      author: mpd
+      changes:
+        - addColumn:
+            tableName: reminders
+            columns:
+              - column:
+                  name: completed
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false

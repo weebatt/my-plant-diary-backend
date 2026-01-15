@@ -36,7 +36,16 @@ services:
       SPRING_PROFILES_ACTIVE: dev
       SERVER_PORT: ${GATEWAY_PORT:-8080}
       DB_HOST: postgres
+      # Enable scheduled reminder notifications in the monolith
+      APP_NOTIFICATIONS_SCHEDULER_ENABLED: ${APP_NOTIFICATIONS_SCHEDULER_ENABLED:-true}
+      # Optional: run scheduler more frequently in dev for quicker feedback
+      APP_NOTIFICATIONS_SCHEDULER_INTERVAL_MS: ${APP_NOTIFICATIONS_SCHEDULER_INTERVAL_MS:-60000}
       SECURITY_AUTH_ENABLED: ${SECURITY_AUTH_ENABLED:-false}
+      SECURITY_JWT_ISSUER: ${SECURITY_JWT_ISSUER:-http://localhost}
+      SECURITY_JWT_AUDIENCE: ${SECURITY_JWT_AUDIENCE:-mpd}
+      SECURITY_JWT_SECRET: ${SECURITY_JWT_SECRET:-dev-secret-change-me}
+      SEED_ADMIN_EMAIL: ${SEED_ADMIN_EMAIL:-admin@example.com}
+      SEED_ADMIN_PASSWORD: ${SEED_ADMIN_PASSWORD:-admin123}
       APP_MESSAGING_ENABLED: ${APP_MESSAGING_ENABLED:-true}
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
@@ -54,6 +63,10 @@ services:
       - rabbitmq
     environment:
       SPRING_PROFILES_ACTIVE: dev
+      SECURITY_AUTH_ENABLED: ${SECURITY_AUTH_ENABLED:-false}
+      SECURITY_JWT_ISSUER: ${SECURITY_JWT_ISSUER:-http://localhost}
+      SECURITY_JWT_AUDIENCE: ${SECURITY_JWT_AUDIENCE:-mpd}
+      SECURITY_JWT_SECRET: ${SECURITY_JWT_SECRET:-dev-secret-change-me}
       APP_MESSAGING_ENABLED: ${APP_MESSAGING_ENABLED:-true}
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
@@ -61,5 +74,7 @@ services:
       RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-guest}
       TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
       TELEGRAM_WEBHOOK_ENABLED: ${TELEGRAM_WEBHOOK_ENABLED:-false}
+      # Enable polling-based auto-binding via "/start <userId>"
+      TELEGRAM_POLLING_ENABLED: ${TELEGRAM_POLLING_ENABLED:-true}
     ports:
       - "${TELEGRAM_PORT:-8081}:8081"

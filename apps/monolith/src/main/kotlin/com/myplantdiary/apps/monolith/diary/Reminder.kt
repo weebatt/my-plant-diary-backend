@@ -17,5 +17,7 @@ data class Reminder(
     @Column(name = "due_at", nullable = false) val dueAt: OffsetDateTime,
     @Column(name = "created_at", nullable = false) val createdAt: OffsetDateTime,
     @Column(name = "updated_at", nullable = false) val updatedAt: OffsetDateTime,
+    @Column(name = "completed", nullable = false) val completed: Boolean = false,
+    @Column(name = "notified", nullable = false) val notified: Boolean = false,
+    @Column(name = "notes") val notes: String? = null,
 )
-

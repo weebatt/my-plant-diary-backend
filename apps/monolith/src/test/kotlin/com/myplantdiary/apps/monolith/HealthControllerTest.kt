@@ -9,7 +9,7 @@ import org.springframework.test.web.servlet.get
 @WebMvcTest(HealthController::class)
 class HealthControllerTest(@Autowired val mockMvc: MockMvc) {
     @Test
-    fun `GET /healthz returns ok`() {
+    fun `GET healthz returns ok`() {
         mockMvc.get("/healthz")
             .andExpect {
                 status { isOk() }

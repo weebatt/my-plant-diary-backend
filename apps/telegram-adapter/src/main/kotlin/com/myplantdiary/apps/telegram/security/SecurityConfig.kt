@@ -38,6 +38,7 @@ class SecurityConfig {
 }
 
 @Configuration
+@EnableConfigurationProperties(SecurityProps::class)
 @ConditionalOnProperty(prefix = "security.auth", name = ["enabled"], havingValue = "true")
 class JwtResourceServerConfig(
     private val props: SecurityProps
@@ -81,4 +82,3 @@ class SecurityProps(
         val secret: String = "dev-secret-change-me"
     )
 }
-

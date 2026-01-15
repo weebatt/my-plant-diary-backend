@@ -16,6 +16,7 @@ dependencies {
     runtimeOnly(libs.postgresql)
     implementation(libs.springBootStarterSecurity)
     implementation(libs.springBootStarterOAuth2ResourceServer)
+    implementation("org.springframework.boot:spring-boot-starter-jdbc")
     implementation(libs.springdocOpenapiUi)
     implementation(libs.micrometerRegistryPrometheus)
     implementation(libs.jacksonModuleKotlin)

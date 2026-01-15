@@ -33,7 +33,7 @@ class DiaryUserPlantsController(
         @RequestParam(required = false, defaultValue = "0") page: Int,
         @RequestParam(required = false, defaultValue = "20") size: Int,
         @RequestParam(required = false) sort: String?
-    ): PageResponse<UserPlant> = diary.listUserPlants(UUID.fromString(jwt.subject), page, size, sort).toPageResponse()
+    ): PageResponse<DiaryService.UserPlantView> = diary.listUserPlantsView(UUID.fromString(jwt.subject), page, size, sort).toPageResponse()
 
     @PostMapping
     fun create(

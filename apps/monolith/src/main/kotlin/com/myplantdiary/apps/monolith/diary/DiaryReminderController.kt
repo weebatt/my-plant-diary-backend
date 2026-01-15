@@ -21,7 +21,8 @@ class DiaryReminderController(
 ) {
     data class CreateReminderRequest(
         @field:NotBlank val kind: String,
-        @field:NotBlank val dueAt: String
+        @field:NotBlank val dueAt: String,
+        val notes: String? = null,
     )
 
     @GetMapping("/due")
@@ -41,7 +42,7 @@ class DiaryReminderController(
     ): ResponseEntity<Reminder> {
         val userId = UUID.fromString(jwt.subject)
         val dueAt = OffsetDateTime.parse(req.dueAt)
-        return ResponseEntity.ok(diary.createReminder(userId, userPlantId, req.kind, dueAt))
+        return ResponseEntity.ok(diary.createReminder(userId, userPlantId, req.kind, dueAt, req.notes))
     }
 
     @PostMapping("/complete/{reminderId}")
@@ -52,5 +53,15 @@ class DiaryReminderController(
         val userId = UUID.fromString(jwt.subject)
         diary.completeReminder(userId, reminderId)
         return ResponseEntity.ok(mapOf("status" to "completed"))
+    }
+
+    @PostMapping("/uncomplete/{reminderId}")
+    fun uncomplete(
+        @AuthenticationPrincipal jwt: Jwt,
+        @PathVariable reminderId: UUID
+    ): ResponseEntity<Map<String, String>> {
+        val userId = UUID.fromString(jwt.subject)
+        diary.uncompleteReminder(userId, reminderId)
+        return ResponseEntity.ok(mapOf("status" to "uncompleted"))
     }
 }

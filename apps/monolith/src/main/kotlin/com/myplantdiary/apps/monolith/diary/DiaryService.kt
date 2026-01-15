@@ -19,7 +19,8 @@ class DiaryService(
     private val userPlants: UserPlantRepository,
     private val careEntries: CareEntryRepository,
     private val reminders: ReminderRepository,
-    private val publisher: MessagingPublisherService
+    private val publisher: MessagingPublisherService,
+    private val plantRepo: com.myplantdiary.apps.monolith.dictionary.PlantRepository,
 ) {
     // User Plants
     fun listUserPlants(userId: UUID, page: Int, size: Int, sort: String?): org.springframework.data.domain.Page<UserPlant> {
@@ -27,6 +28,30 @@ class DiaryService(
         val sortProp = (sort?.trim()?.trimStart('-')?.takeIf { it.isNotBlank() }) ?: "createdAt"
         val pageable = org.springframework.data.domain.PageRequest.of(page.coerceAtLeast(0), size.coerceIn(1, 200), direction, sortProp)
         return userPlants.findAllByUserId(userId, pageable)
+    }
+
+    data class UserPlantView(
+        val id: UUID,
+        val plantId: UUID?,
+        val nickname: String?,
+        val plantLatinName: String?,
+        val plantCommonName: String?,
+    )
+
+    fun listUserPlantsView(userId: UUID, page: Int, size: Int, sort: String?): org.springframework.data.domain.Page<UserPlantView> {
+        val base = listUserPlants(userId, page, size, sort)
+        val plantIds = base.content.mapNotNull { it.plantId }.toSet()
+        val plants = if (plantIds.isNotEmpty()) plantRepo.findAllById(plantIds).associateBy { it.id } else emptyMap()
+        return base.map { up ->
+            val p = up.plantId?.let { plants[it] }
+            UserPlantView(
+                id = up.id,
+                plantId = up.plantId,
+                nickname = up.nickname,
+                plantLatinName = p?.latinName,
+                plantCommonName = p?.commonName,
+            )
+        }
     }
 
     @Transactional
@@ -91,6 +116,13 @@ class DiaryService(
         return careEntries.save(entry)
     }
 
+    @Transactional
+    fun deleteCareEntry(userId: UUID, userPlantId: UUID, careId: UUID) {
+        val entry = careEntries.findById(careId).orElseThrow { NotFoundException("Запись ухода не найдена") }
+        if (entry.userId != userId || entry.userPlantId != userPlantId) throw NotFoundException("Запись ухода не найдена")
+        careEntries.delete(entry)
+    }
+
     // Reminders
     fun listRemindersDue(userId: UUID, before: OffsetDateTime, page: Int, size: Int, sort: String?): org.springframework.data.domain.Page<Reminder> {
         val direction = if (sort?.startsWith("-") == true) org.springframework.data.domain.Sort.Direction.DESC else org.springframework.data.domain.Sort.Direction.ASC
@@ -100,7 +132,7 @@ class DiaryService(
     }
 
     @Transactional
-    fun createReminder(userId: UUID, userPlantId: UUID, kind: String, dueAt: OffsetDateTime): Reminder {
+    fun createReminder(userId: UUID, userPlantId: UUID, kind: String, dueAt: OffsetDateTime, notes: String? = null): Reminder {
         val plant = userPlants.findByIdAndUserId(userPlantId, userId) ?: throw NotFoundException("Растение пользователя не найдено")
         val now = OffsetDateTime.now(ZoneOffset.UTC)
         val normalized = normalizeReminderKind(kind).name.lowercase()
@@ -110,6 +142,7 @@ class DiaryService(
             userPlantId = plant.id,
             kind = normalized,
             dueAt = dueAt,
+            notes = notes?.trim()?.ifBlank { null },
             createdAt = now,
             updatedAt = now
         )
@@ -121,8 +154,16 @@ class DiaryService(
     @Transactional
     fun completeReminder(userId: UUID, reminderId: UUID) {
         val reminder = reminders.findByIdAndUserId(reminderId, userId) ?: throw NotFoundException("Напоминание не найдено")
-        reminders.delete(reminder)
-        publishReminderCompleted(reminder)
+        val updated = reminder.copy(completed = true, updatedAt = OffsetDateTime.now(ZoneOffset.UTC))
+        reminders.save(updated)
+        publishReminderCompleted(updated)
+    }
+
+    @Transactional
+    fun uncompleteReminder(userId: UUID, reminderId: UUID) {
+        val reminder = reminders.findByIdAndUserId(reminderId, userId) ?: throw NotFoundException("Напоминание не найдено")
+        val updated = reminder.copy(completed = false, updatedAt = OffsetDateTime.now(ZoneOffset.UTC))
+        reminders.save(updated)
     }
 
     private fun publishReminderCreated(r: Reminder) {

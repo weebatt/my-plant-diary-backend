@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: 005-reminders-notes
+      author: mpd
+      changes:
+        - addColumn:
+            tableName: reminders
+            columns:
+              - column:
+                  name: notes
+                  type: TEXT
+                  constraints:
+                    nullable: true

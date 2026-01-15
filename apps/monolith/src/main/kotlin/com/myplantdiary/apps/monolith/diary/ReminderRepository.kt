@@ -11,4 +11,6 @@ interface ReminderRepository : JpaRepository<Reminder, UUID> {
     fun findByIdAndUserId(id: UUID, userId: UUID): Reminder?
     fun findAllByUserIdAndDueAtBefore(userId: UUID, before: OffsetDateTime, pageable: Pageable): Page<Reminder>
     fun findAllByUserIdAndDueAtBetween(userId: UUID, start: OffsetDateTime, end: OffsetDateTime, pageable: Pageable): Page<Reminder>
+
+    fun findAllByCompletedFalseAndNotifiedFalseAndDueAtBefore(before: OffsetDateTime): List<Reminder>
 }

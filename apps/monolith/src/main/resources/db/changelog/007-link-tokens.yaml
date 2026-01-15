@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: 007-link-tokens
+      author: mpd
+      changes:
+        - createTable:
+            tableName: link_tokens
+            columns:
+              - column: { name: token, type: varchar(64), constraints: { primaryKey: true, nullable: false } }
+              - column: { name: user_id, type: uuid, constraints: { nullable: false } }
+              - column: { name: expires_at, type: timestamp with time zone, constraints: { nullable: false } }
+              - column: { name: created_at, type: timestamp with time zone, constraints: { nullable: false } }
+              - column: { name: used, type: boolean, defaultValueBoolean: false, constraints: { nullable: false } }
